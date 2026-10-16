@@ -1,0 +1,17 @@
+{
+  "name": "러닝 트레이닝",
+  "short_name": "러닝 트레이닝",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f4f8fd",
+  "theme_color": "#3b97f3",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
