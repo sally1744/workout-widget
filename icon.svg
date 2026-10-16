@@ -1,8 +1,28 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-  <rect width="512" height="512" rx="112" fill="#3B97F3"/>
-  <path d="M132 313c44 8 91 5 137-10 54-18 95-55 120-112 4-9 15-13 24-9 9 4 13 15 9 24-29 66-77 110-141 131-53 18-108 21-159 11-10-2-16-12-14-22 2-9 12-15 24-13Z" fill="#fff"/>
-  <path d="M148 291c35 1 68-5 99-18 35-15 67-39 96-72l-39-71c-4-8-1-18 7-23 8-4 18-1 23 7l48 87c3 6 2 14-2 19-33 40-72 70-116 89-37 16-76 23-117 21-10 0-18-9-17-19 0-10 8-19 18-20Z" fill="#fff"/>
-  <path d="M221 164l41 73" stroke="#3B97F3" stroke-width="18" stroke-linecap="round"/>
-  <path d="M285 165l34 60" stroke="#3B97F3" stroke-width="18" stroke-linecap="round"/>
-  <path d="M126 361h260" stroke="#fff" stroke-width="18" stroke-linecap="round" opacity=".95"/>
+  <defs>
+    <linearGradient id="bg" x1="60" y1="30" x2="450" y2="490" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#46A7F7"/>
+      <stop offset="1" stop-color="#2E8FF0"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" fill="url(#bg)"/>
+  <g fill="none" stroke="#FFFFFF" stroke-width="18" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M133 314
+             C170 300 204 275 232 244
+             C251 223 267 202 279 183
+             C285 174 296 174 302 183
+             L329 224
+             C339 239 351 249 366 258
+             L391 273
+             C408 283 417 300 413 314
+             C409 327 394 335 369 338
+             C323 344 277 350 232 357
+             C189 363 154 360 131 350
+             C112 342 105 327 112 319
+             C116 315 122 313 133 314Z"/>
+    <path d="M125 349
+             C170 360 212 360 254 353
+             C297 346 338 341 382 336"/>
+    <path d="M299 210 L330 256"/>
+  </g>
 </svg>
