@@ -29,7 +29,9 @@ body{
   box-shadow:0 10px 28px rgba(55,86,125,.09)
 }
 .kicker{font-size:10px;font-weight:900;color:#5d82b4;letter-spacing:.09em}
-h1{font-size:22px;line-height:1.15;margin:5px 0 5px;letter-spacing:-.03em}
+.brandRow{display:flex;align-items:center;gap:10px;margin-top:5px}
+.brandLogo{width:34px;height:34px;display:block;border-radius:9px;object-fit:cover;flex:0 0 auto}
+h1{font-size:22px;line-height:1.15;margin:0;letter-spacing:-.03em}
 .sub{font-size:11.5px;color:var(--muted)}
 .today{
   margin-top:12px;display:flex;justify-content:space-between;gap:10px;align-items:center;
@@ -99,7 +101,7 @@ button.primary{background:linear-gradient(180deg,var(--accent),#759fd9);color:#f
 <div class="app">
   <section class="top">
     <div class="kicker">WEEKLY TRAINING</div>
-    <h1>러닝 트레이닝🏃</h1>
+    <div class="brandRow"><img class="brandLogo" src="icon.svg?v=3" alt=""><h1>러닝 트레이닝</h1></div>
     <div class="sub">50kg · 러닝 + 근력 · 금요일 휴식</div>
 
     <div class="today">
