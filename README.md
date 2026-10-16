@@ -1,0 +1,302 @@
+[index.html.html](https://github.com/user-attachments/files/33521351/index.html.html)
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#edf5ff">
+<title>은의 운동 위젯</title>
+<style>
+:root{
+  --bg:#f4f8fd; --card:#ffffff; --text:#172033; --muted:#738097;
+  --line:#dfe8f3; --accent:#648fc9; --accent2:#8fb4e3; --soft:#edf5ff;
+  --green:#5d9f77; --green-soft:#eef8f2; --rest:#f3f5f7;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;background:linear-gradient(180deg,#edf5ff 0,#f7faff 42%,#f4f8fd 100%);
+  color:var(--text);
+  font-family:system-ui,-apple-system,BlinkMacSystemFont,"Pretendard","Noto Sans KR",sans-serif;
+  -webkit-font-smoothing:antialiased
+}
+.app{max-width:470px;margin:auto;padding:12px}
+.top{
+  background:linear-gradient(145deg,#fff,#eff6ff);
+  border:1px solid var(--line);border-radius:24px;padding:16px;
+  box-shadow:0 10px 28px rgba(55,86,125,.09)
+}
+.kicker{font-size:10px;font-weight:900;color:#5d82b4;letter-spacing:.09em}
+h1{font-size:22px;line-height:1.15;margin:5px 0 5px;letter-spacing:-.03em}
+.sub{font-size:11.5px;color:var(--muted)}
+.today{
+  margin-top:12px;display:flex;justify-content:space-between;gap:10px;align-items:center;
+  background:var(--soft);border-radius:15px;padding:10px 11px
+}
+.today strong{font-size:13px}
+.today span{font-size:11px;color:#5876a0}
+.barRow{display:flex;align-items:center;gap:9px;margin-top:10px}
+.track{height:8px;flex:1;border-radius:999px;background:#e3eaf3;overflow:hidden}
+.fill{height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:.2s}
+.pct{font-size:11px;font-weight:900;color:#557aa9;min-width:32px;text-align:right}
+
+.basics{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:9px 0
+}
+.metric{
+  background:#fff;border:1px solid var(--line);border-radius:16px;padding:10px 8px;
+  box-shadow:0 5px 15px rgba(55,86,125,.05)
+}
+.metric small{display:block;font-size:10px;color:var(--muted);font-weight:800}
+.metric b{display:block;font-size:15px;margin:3px 0 1px}
+.metric span{display:block;font-size:9.5px;color:var(--muted);line-height:1.3}
+
+.week{display:grid;gap:7px}
+.day{
+  background:#fff;border:1px solid var(--line);border-radius:17px;padding:11px;
+  box-shadow:0 4px 13px rgba(55,86,125,.045)
+}
+.day.current{border:1.5px solid #aac5e8;background:linear-gradient(180deg,#fff,#f7fbff)}
+.day.done{background:linear-gradient(180deg,#fff,#f3faf6)}
+.day.rest{background:linear-gradient(180deg,#fff,#f5f6f8)}
+.head{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.dayName{font-size:10px;color:var(--muted);font-weight:850}
+.title{font-size:15px;font-weight:900;margin-top:1px}
+.meta{font-size:10px;color:#5f7da3;background:#eef5ff;padding:5px 7px;border-radius:999px;font-weight:850}
+.tasks{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:8px}
+.task{
+  display:flex;align-items:flex-start;gap:6px;background:#fafcff;border:1px solid #edf2f7;
+  padding:7px;border-radius:11px;min-height:39px
+}
+.task input{width:17px;height:17px;margin:0;accent-color:var(--accent);flex:0 0 auto}
+.copy{min-width:0}
+.name{font-size:10.5px;font-weight:850;line-height:1.2;display:block}
+.detail{font-size:9px;color:var(--muted);line-height:1.25;display:block;margin-top:2px}
+.task input:checked + .copy{opacity:.55}
+.task input:checked + .copy .name{text-decoration:line-through}
+.note{
+  margin-top:7px;padding:7px 8px;border-radius:11px;background:#f5f8fc;
+  font-size:9px;line-height:1.35;color:#64738a
+}
+.note strong{color:#455d7b}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:9px}
+button{
+  min-height:42px;border-radius:13px;border:1px solid var(--line);background:#fff;
+  font-weight:900;color:#45566f;font-size:11px
+}
+button.primary{background:linear-gradient(180deg,var(--accent),#759fd9);color:#fff;border-color:transparent}
+.footer{font-size:9px;color:var(--muted);line-height:1.45;text-align:center;margin:9px 4px 0}
+@media(max-width:360px){
+  .tasks{grid-template-columns:1fr}
+  .basics{grid-template-columns:1fr 1fr}
+  .metric:last-child{grid-column:1/-1}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <section class="top">
+    <div class="kicker">WEEKLY TRAINING</div>
+    <h1>은의 운동 위젯 🌿</h1>
+    <div class="sub">50kg · 러닝 + 근력 · 금요일 휴식</div>
+
+    <div class="today">
+      <strong id="todayTitle">오늘 일정</strong>
+      <span id="todayHint">확인 중</span>
+    </div>
+
+    <div class="barRow">
+      <div class="track"><div class="fill" id="progress"></div></div>
+      <div class="pct" id="pct">0%</div>
+    </div>
+  </section>
+
+  <section class="basics">
+    <div class="metric">
+      <small>💧 수분</small>
+      <b>2.0–2.3L</b>
+      <span>운동일 +300–500mL</span>
+    </div>
+    <div class="metric">
+      <small>😴 수면</small>
+      <b>7–8시간</b>
+      <span>최소 7시간 목표</span>
+    </div>
+    <div class="metric">
+      <small>🥚 단백질</small>
+      <b>70–80g</b>
+      <span>50kg × 1.4–1.6g</span>
+    </div>
+  </section>
+
+  <section class="week">
+
+    <article class="day" data-day="1">
+      <div class="head">
+        <div><div class="dayName">월요일</div><div class="title">근력 · 하체 중심</div></div>
+        <div class="meta">45–55분</div>
+      </div>
+      <div class="tasks">
+        <label class="task"><input type="checkbox"><span class="copy"><span class="name">레그프레스</span><span class="detail">40kg 시작 · 10회 × 3세트</span></span></label>
+        <label class="task"><input type="checkbox"><span class="copy"><span class="name">힙쓰러스트</span><span class="detail">20kg 시작 · 10회 × 3세트</span></span></label>
+        <label class="task"><input type="checkbox"><span class="copy"><span class="name">런지</span><span class="detail">맨몸 또는 4kg×2 · 좌우 10회 × 2세트</span></span></label>
+        <label class="task"><input type="checkbox"><span class="copy"><span class="name">랫풀다운</span><span class="detail">15kg 시작 · 10회 × 3세트</span></span></label>
+        <label class="task"><input type="checkbox"><span class="copy"><span class="name">체스트프레스</span><span class="detail">10kg 시작 · 10회 × 2세트</span></span></label>
+        <label class="task"><input type="checkbox"><span class="copy"><span class="name">플랭크</span><span class="detail">30초 × 3세트</span></span></label>
+      </div>
+      <div class="note"><strong>증량:</strong> 모든 세트가 10회 여유 있게 끝나면 다음 주 +2.5–5kg. 마지막 2회가 힘들지만 자세가 유지되는 무게가 기준.</div>
+    </article>
+
+    <article class="day" data-day="2">
+      <div class="head">
+        <div><div class="dayName">화요일</div><div class="title">이지런</div></div>
+        <div class="meta">5–7km</div>
+      </div>
+      <div class="tasks">
+        <label class="task"><input type="checkbox"><span class="copy"><span class="name">워밍업</span><span class="detail">걷기 5분</span></span></label>
+        <label class="task"><input type="checkbox"><span class="copy"><span class="name">이지런</span><span class="detail">5–7km · 6:00–6:30/km</span></span></label>
+        <label class="task"><input type="checkbox"><span class="copy"><span class="name">쿨다운</span><span class="detail">걷기 5분</span></span></label>
+        <label class="task"><input type="checkbox"><span class="copy"><span class="name">스트레칭</span><span class="detail">종아리·햄스트링 각 30초 × 2</span></span></label>
+      </div>
+    </article>
+
+    <article class="day" data-day="3">
+      <div class="head">
+        <div><div class="dayName">수요일</div><div class="title">품질 러닝</div></div>
+        <div class="meta">1개 선택</div>
+      </div>
+      <div class="tasks">
+        <label class="task"><input type="checkbox"><span class="copy"><span class="name">워밍업</span><span class="detail">조깅 10–15분</span></span></label>
+        <label class="task"><input type="checkbox"><span class="copy"><span class="name">인터벌</span><span class="detail">1km × 4회 · 5:05–5:15/km · 회복 2분</span></span></label>
+        <label class="task"><input type="checkbox"><span class="copy"><span class="name">또는 템포런</span><span class="detail">4km · 5:25–5:30/km</span></span></label>
+        <label class="task"><input type="checkbox"><span class="copy"><span class="name">쿨다운</span><span class="detail">조깅/걷기 10분</span></span></label>
+      </div>
+      <div class="note"><strong>주의:</strong> 인터벌과 템포런은 같은 날 둘 다 하지 않기.</div>
+    </article>
+
+    <article class="day" data-day="4">
+      <div class="head">
+        <div><div class="dayName">목요일</div><div class="title">근력 · 가볍게</div></div>
+        <div class="meta">35–45분</div>
+      </div>
+      <div class="tasks">
+        <label class="task"><input type="checkbox"><span class="copy"><span class="name">레그프레스</span><span class="detail">30–35kg · 10회 × 2세트</span></span></label>
+        <label class="task"><input type="checkbox"><span class="copy"><span class="name">힙 어브덕션</span><span class="detail">20kg 시작 · 12회 × 2세트</span></span></label>
+        <label class="task"><input type="checkbox"><span class="copy"><span class="name">시티드 로우</span><span class="detail">15kg 시작 · 10회 × 3세트</span></span></label>
+        <label class="task"><input type="checkbox"><span class="copy"><span class="name">숄더프레스</span><span class="detail">5kg 시작 · 10회 × 2세트</span></span></label>
+        <label class="task"><input type="checkbox"><span class="copy"><span class="name">데드버그</span><span class="detail">좌우 10회 × 2세트</span></span></label>
+      </div>
+    </article>
+
+    <article class="day rest" data-day="5">
+      <div class="head">
+        <div><div class="dayName">금요일</div><div class="title">완전 휴식</div></div>
+        <div class="meta">회복</div>
+      </div>
+      <div class="tasks">
+        <label class="task"><input type="checkbox"><span class="copy"><span class="name">운동 쉬기</span><span class="detail">일상 걷기만</span></span></label>
+        <label class="task"><input type="checkbox"><span class="copy"><span class="name">물 2.0L 이상</span><span class="detail">한 번에 몰아서 마시지 않기</span></span></label>
+        <label class="task"><input type="checkbox"><span class="copy"><span class="name">수면 7시간 이상</span><span class="detail">가능하면 7.5–8시간</span></span></label>
+      </div>
+    </article>
+
+    <article class="day" data-day="6">
+      <div class="head">
+        <div><div class="dayName">토요일</div><div class="title">롱런</div></div>
+        <div class="meta">8–10km</div>
+      </div>
+      <div class="tasks">
+        <label class="task"><input type="checkbox"><span class="copy"><span class="name">워밍업</span><span class="detail">걷기+조깅 5–10분</span></span></label>
+        <label class="task"><input type="checkbox"><span class="copy"><span class="name">롱런</span><span class="detail">8–10km · 5:50–6:20/km</span></span></label>
+        <label class="task"><input type="checkbox"><span class="copy"><span class="name">쿨다운</span><span class="detail">걷기 5분</span></span></label>
+        <label class="task"><input type="checkbox"><span class="copy"><span class="name">스트레칭</span><span class="detail">종아리·둔근·햄스트링 30초 × 2</span></span></label>
+      </div>
+    </article>
+
+    <article class="day" data-day="0">
+      <div class="head">
+        <div><div class="dayName">일요일</div><div class="title">회복</div></div>
+        <div class="meta">20–30분</div>
+      </div>
+      <div class="tasks">
+        <label class="task"><input type="checkbox"><span class="copy"><span class="name">걷기</span><span class="detail">20–30분</span></span></label>
+        <label class="task"><input type="checkbox"><span class="copy"><span class="name">전신 스트레칭</span><span class="detail">10분</span></span></label>
+        <label class="task"><input type="checkbox"><span class="copy"><span class="name">코어</span><span class="detail">플랭크 30초 × 2</span></span></label>
+        <label class="task"><input type="checkbox"><span class="copy"><span class="name">선택 조깅</span><span class="detail">몸 좋을 때만 20분</span></span></label>
+      </div>
+    </article>
+  </section>
+
+  <div class="actions">
+    <button class="primary" id="todayDone">오늘 전체 체크</button>
+    <button id="reset">이번 주 초기화</button>
+  </div>
+
+  <div class="footer">
+    근력 시작 중량은 체중만으로 정확히 결정할 수 없어 보수적으로 잡은 값입니다.<br>
+    통증이 있거나 자세가 무너지면 즉시 중량을 낮추세요.
+  </div>
+</div>
+
+<script>
+(function(){
+  const key="eun-compact-workout-v4";
+  const cards=[...document.querySelectorAll(".day")];
+  const checks=[...document.querySelectorAll('.task input[type="checkbox"]')];
+  const today=new Date().getDay();
+  const names=["일요일","월요일","화요일","수요일","목요일","금요일","토요일"];
+
+  function load(){
+    try{
+      const s=JSON.parse(localStorage.getItem(key)||"{}");
+      checks.forEach((c,i)=>c.checked=!!s[i]);
+    }catch(e){}
+  }
+
+  function save(){
+    const s={};
+    checks.forEach((c,i)=>s[i]=c.checked);
+    localStorage.setItem(key,JSON.stringify(s));
+    render();
+  }
+
+  function render(){
+    cards.forEach(card=>{
+      const cs=[...card.querySelectorAll('input[type="checkbox"]')];
+      const done=cs.filter(c=>c.checked).length;
+      card.classList.toggle("current",Number(card.dataset.day)===today);
+      card.classList.toggle("done",cs.length>0&&done===cs.length);
+    });
+
+    const done=checks.filter(c=>c.checked).length;
+    const pct=Math.round(done/checks.length*100);
+    document.getElementById("progress").style.width=pct+"%";
+    document.getElementById("pct").textContent=pct+"%";
+
+    const current=cards.find(c=>Number(c.dataset.day)===today);
+    document.getElementById("todayTitle").textContent=names[today]+" · "+(current?current.querySelector(".title").textContent:"회복");
+    document.getElementById("todayHint").textContent="오늘 할 것만 보면 돼";
+  }
+
+  checks.forEach(c=>c.addEventListener("change",save));
+
+  document.getElementById("todayDone").addEventListener("click",()=>{
+    const current=cards.find(c=>Number(c.dataset.day)===today);
+    if(!current)return;
+    current.querySelectorAll('input[type="checkbox"]').forEach(c=>c.checked=true);
+    save();
+    current.scrollIntoView({behavior:"smooth",block:"center"});
+  });
+
+  document.getElementById("reset").addEventListener("click",()=>{
+    if(confirm("이번 주 체크를 모두 초기화할까요?")){
+      localStorage.removeItem(key);
+      checks.forEach(c=>c.checked=false);
+      render();
+    }
+  });
+
+  load(); render();
+})();
+</script>
+</body>
+</html>
