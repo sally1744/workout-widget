@@ -1,21 +1,4 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
   <rect width="512" height="512" rx="112" fill="#3A9BF2"/>
-  <g fill="none" stroke="#fff" stroke-width="22" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M133 318
-      C161 310 188 299 211 282
-      C237 262 254 234 269 208
-      C274 199 285 198 292 207
-      L318 242
-      C326 253 336 261 349 268
-      L383 286
-      C401 296 410 311 406 326
-      C402 340 388 348 365 352
-      L240 372
-      C191 380 153 373 130 357
-      C116 347 116 332 133 318Z"/>
-    <path d="M131 352
-      C176 365 216 365 257 358
-      L373 339"/>
-    <path d="M299 221 L323 253"/>
-  </g>
+  <path d="M256 150 L370 348 H142 Z" fill="#FFFFFF"/>
 </svg>
