@@ -81,6 +81,27 @@ h1{font-size:22px;line-height:1.15;margin:5px 0 5px;letter-spacing:-.03em}
   font-size:9px;line-height:1.35;color:#64738a
 }
 .note strong{color:#455d7b}
+.review{
+  margin-top:9px;background:#fff;border:1px solid var(--line);border-radius:17px;padding:11px;
+  box-shadow:0 4px 13px rgba(55,86,125,.045)
+}
+.reviewHead{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.reviewTitle{font-size:14px;font-weight:900}
+.reviewSub{font-size:9.5px;color:var(--muted);margin-top:2px}
+.reviewGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:9px}
+.reviewField label{display:block;font-size:9px;color:var(--muted);font-weight:800;margin:0 0 4px 2px}
+.reviewField select{
+  width:100%;min-height:37px;border:1px solid var(--line);border-radius:11px;background:#fafcff;
+  padding:0 8px;color:var(--text);font-size:10px;font-weight:800
+}
+.archiveBtn{width:100%;margin-top:8px;background:#edf5ff;border-color:#d9e7f7;color:#4f76a7}
+.history{margin-top:8px;display:grid;gap:6px}
+.historyCard{border:1px solid #e8eef5;background:#fafcff;border-radius:13px;padding:9px}
+.historyTop{display:flex;justify-content:space-between;gap:8px;align-items:center}
+.historyWeek{font-size:11px;font-weight:900}
+.historyPct{font-size:11px;font-weight:900;color:#5d82b4}
+.historyMeta{font-size:9.5px;color:var(--muted);line-height:1.45;margin-top:5px}
+.emptyHistory{font-size:9.5px;color:var(--muted);padding:8px 2px 2px}
 .actions{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:9px}
 button{
   min-height:42px;border-radius:13px;border:1px solid var(--line);background:#fff;
@@ -229,6 +250,47 @@ button.primary{background:linear-gradient(180deg,var(--accent),#759fd9);color:#f
     </article>
   </section>
 
+  <section class="review">
+    <div class="reviewHead">
+      <div>
+        <div class="reviewTitle">이번 주 마감</div>
+        <div class="reviewSub" id="weekRange">이번 주 기록을 저장해 다음 주 조정에 사용</div>
+      </div>
+      <div class="meta" id="historyCount">0주 기록</div>
+    </div>
+
+    <div class="reviewGrid">
+      <div class="reviewField">
+        <label for="condition">컨디션</label>
+        <select id="condition">
+          <option value="좋음">좋음</option>
+          <option value="보통" selected>보통</option>
+          <option value="낮음">낮음</option>
+        </select>
+      </div>
+      <div class="reviewField">
+        <label for="effort">강도</label>
+        <select id="effort">
+          <option value="여유">여유</option>
+          <option value="적당" selected>적당</option>
+          <option value="과함">과함</option>
+        </select>
+      </div>
+      <div class="reviewField">
+        <label for="pain">통증</label>
+        <select id="pain">
+          <option value="없음" selected>없음</option>
+          <option value="약간">약간</option>
+          <option value="있음">있음</option>
+        </select>
+      </div>
+    </div>
+
+    <button class="archiveBtn" id="archiveWeek">이번 주 기록 저장하고 다음 주 준비</button>
+
+    <div class="history" id="history"></div>
+  </section>
+
   <div class="actions">
     <button class="primary" id="todayDone">오늘 전체 체크</button>
     <button id="reset">이번 주 초기화</button>
@@ -243,10 +305,26 @@ button.primary{background:linear-gradient(180deg,var(--accent),#759fd9);color:#f
 <script>
 (function(){
   const key="eun-compact-workout-v4";
+  const historyKey="eun-workout-history-v1";
   const cards=[...document.querySelectorAll(".day")];
   const checks=[...document.querySelectorAll('.task input[type="checkbox"]')];
   const today=new Date().getDay();
   const names=["일요일","월요일","화요일","수요일","목요일","금요일","토요일"];
+
+  function getWeekInfo(){
+    const now=new Date();
+    const day=now.getDay();
+    const diff=(day===0?-6:1-day);
+    const mon=new Date(now);
+    mon.setHours(0,0,0,0);
+    mon.setDate(now.getDate()+diff);
+    const sun=new Date(mon);
+    sun.setDate(mon.getDate()+6);
+    const pad=n=>String(n).padStart(2,"0");
+    const id=mon.getFullYear()+"-"+pad(mon.getMonth()+1)+"-"+pad(mon.getDate());
+    const label=(mon.getMonth()+1)+"/"+mon.getDate()+"–"+(sun.getMonth()+1)+"/"+sun.getDate();
+    return {id,label};
+  }
 
   function load(){
     try{
@@ -260,6 +338,46 @@ button.primary{background:linear-gradient(180deg,var(--accent),#759fd9);color:#f
     checks.forEach((c,i)=>s[i]=c.checked);
     localStorage.setItem(key,JSON.stringify(s));
     render();
+  }
+
+  function getHistory(){
+    try{
+      const h=JSON.parse(localStorage.getItem(historyKey)||"[]");
+      return Array.isArray(h)?h:[];
+    }catch(e){return[]}
+  }
+
+  function setHistory(h){
+    localStorage.setItem(historyKey,JSON.stringify(h));
+  }
+
+  function daySummary(card){
+    const cs=[...card.querySelectorAll('input[type="checkbox"]')];
+    const done=cs.filter(c=>c.checked).length;
+    return {
+      day:card.querySelector(".dayName").textContent,
+      title:card.querySelector(".title").textContent,
+      done,
+      total:cs.length,
+      complete:cs.length>0&&done===cs.length
+    };
+  }
+
+  function renderHistory(){
+    const wrap=document.getElementById("history");
+    const h=getHistory().slice().reverse();
+    document.getElementById("historyCount").textContent=h.length+"주 기록";
+    if(!h.length){
+      wrap.innerHTML='<div class="emptyHistory">아직 저장된 주간 기록이 없어.</div>';
+      return;
+    }
+    wrap.innerHTML=h.slice(0,6).map(x=>{
+      const completed=x.days.filter(d=>d.complete).map(d=>d.day.replace("요일","")).join(" · ")||"완료 요일 없음";
+      return '<div class="historyCard">'+
+        '<div class="historyTop"><div class="historyWeek">'+x.label+'</div><div class="historyPct">'+x.pct+'%</div></div>'+
+        '<div class="historyMeta">완료: '+completed+'<br>컨디션 '+x.condition+' · 강도 '+x.effort+' · 통증 '+x.pain+'</div>'+
+      '</div>';
+    }).join("");
   }
 
   function render(){
@@ -278,6 +396,10 @@ button.primary{background:linear-gradient(180deg,var(--accent),#759fd9);color:#f
     const current=cards.find(c=>Number(c.dataset.day)===today);
     document.getElementById("todayTitle").textContent=names[today]+" · "+(current?current.querySelector(".title").textContent:"회복");
     document.getElementById("todayHint").textContent="오늘 할 것만 보면 돼";
+
+    const w=getWeekInfo();
+    document.getElementById("weekRange").textContent=w.label+" 기록을 저장해 다음 주 조정에 사용";
+    renderHistory();
   }
 
   checks.forEach(c=>c.addEventListener("change",save));
@@ -290,8 +412,40 @@ button.primary{background:linear-gradient(180deg,var(--accent),#759fd9);color:#f
     current.scrollIntoView({behavior:"smooth",block:"center"});
   });
 
+  document.getElementById("archiveWeek").addEventListener("click",()=>{
+    const w=getWeekInfo();
+    const done=checks.filter(c=>c.checked).length;
+    const pct=Math.round(done/checks.length*100);
+    const record={
+      id:w.id,
+      label:w.label,
+      savedAt:new Date().toISOString(),
+      pct,
+      days:cards.map(daySummary),
+      condition:document.getElementById("condition").value,
+      effort:document.getElementById("effort").value,
+      pain:document.getElementById("pain").value
+    };
+    let h=getHistory();
+    const existing=h.findIndex(x=>x.id===w.id);
+    const msg=existing>=0
+      ? w.label+" 기록이 이미 있어. 현재 상태로 덮어쓸까?"
+      : w.label+" 기록을 저장하고 이번 주 체크를 초기화할까?";
+    if(!confirm(msg))return;
+    if(existing>=0)h[existing]=record; else h.push(record);
+    h=h.slice(-52);
+    setHistory(h);
+    localStorage.removeItem(key);
+    checks.forEach(c=>c.checked=false);
+    document.getElementById("condition").value="보통";
+    document.getElementById("effort").value="적당";
+    document.getElementById("pain").value="없음";
+    render();
+    alert("이번 주 기록을 저장했어.");
+  });
+
   document.getElementById("reset").addEventListener("click",()=>{
-    if(confirm("이번 주 체크를 모두 초기화할까요?")){
+    if(confirm("이번 주 체크를 모두 초기화할까요? 저장된 주간 기록은 유지돼.")){
       localStorage.removeItem(key);
       checks.forEach(c=>c.checked=false);
       render();
